@@ -1,0 +1,17 @@
+#!/bin/bash
+
+function recurse-on {
+  local root=${1}
+  local command=${2}
+
+  for repo in $(find "${root}" -name .git -type d -depth 2 -exec dirname {} \;); do
+    printf "$(tput bold)$(basename ${repo})$(tput sgr0)\n"
+    git -C "${repo}" ${command}
+    printf '\n'
+  done
+}
+
+command='status -b -v'
+[[ -n "${2}" ]] && command="${@:2}"
+
+recurse-on "${HOME}/workspace/${1}" "${command}"
