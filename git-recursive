@@ -2,7 +2,7 @@
 
 set -e
 
-VERSION="0.1.0"
+VERSION="0.1.1"
 
 ws_name_color="$(tput setaf 2)"
 bold="$(tput bold)"
@@ -18,9 +18,12 @@ Available options are:
   -v|--version      Prints the plugin version
 
 Available subcommands are:
-  list                    Lists registered workspaces
-  add <workspace> <path>  Adds or updates a workspace path
-  rm <workspace>          Removes a workspace
+  list                      Lists registered workspaces
+  add <workspace> <path>    Adds or updates a workspace path
+  rm <workspace>            Removes a workspace
+
+  <workspace> <gitcommand>  Executes a git command on all repositories inside
+                            the workspace
 EOF
 }
 
