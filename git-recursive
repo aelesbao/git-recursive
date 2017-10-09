@@ -1,17 +1,142 @@
 #!/bin/bash
 
-function recurse-on {
-  local root=${1}
+set -e
+
+VERSION="0.1.0"
+
+ws_name_color="$(tput setaf 2)"
+bold="$(tput bold)"
+reset="$(tput sgr0)"
+
+usage() {
+  cat <<EOF
+usage: git recursive [<options>] <subcommand>|(<workspace> <gitcommand>)
+
+Available options are:
+  --no-color        Do not colorize output
+  -h|--help         Prints this message
+  -v|--version      Prints the plugin version
+
+Available subcommands are:
+  list                    Lists registered workspaces
+  add <workspace> <path>  Adds or updates a workspace path
+  rm <workspace>          Removes a workspace
+EOF
+}
+
+version() {
+  echo "git-recursive v${VERSION}"
+}
+
+resolve-dir() {
+  (builtin cd "$(dirname "${1/#~/$HOME}")" 2>/dev/null && printf "%s/%s" "$(pwd -P)" "${1##*/}") || return 1
+}
+
+add-workspace() {
+  local workspace=${1}
+  local workspace_path=${2}
+  git config --global "workspaces.${workspace}" "${workspace_path}"
+}
+
+rm-workspace() {
+  if [ "$#" -ne 1 ]; then
+    usage; exit 1
+  fi
+
+  local workspace=${1}
+  git config --global --unset "workspaces.${workspace}"
+}
+
+list-workspaces() {
+  git config --get-regexp 'workspaces.*' | \
+    sed 's/workspaces.//g' | \
+    awk -v ws_name="$ws_name_color" -v reset="$reset" \
+      '{ printf "%s%-16s%s %s\n", ws_name, $1, reset, $2; }'
+}
+
+get-workspace() {
+  local workspace=${1}
+  resolve-dir "$(git config --global "workspaces.${workspace}")"
+}
+
+recurse-on() {
+  if [ "$#" -lt 2 ]; then
+    usage; exit 1
+  fi
+
+  local root
   local command=${2}
 
+  root="$(get-workspace "${1}")"
+  if [ ! -d "${root}" ]; then
+    echo "Workspace not found: ${1}"
+    return 1
+  fi
+
   for repo in $(find "${root}" -name .git -type d -depth 2 -exec dirname {} \;); do
-    printf "$(tput bold)$(basename ${repo})$(tput sgr0)\n"
+    printf "${bold}$(basename ${repo})${reset}\n"
     git -C "${repo}" ${command}
     printf '\n'
   done
 }
 
-command='status -b -v'
-[[ -n "${2}" ]] && command="${@:2}"
+main() {
+  local positional=()
+  while [[ $# -gt 0 ]]; do
+    case "${1}" in
+      "-h"|"--help")
+        usage; exit 0
+        ;;
+      "-v"|"--version")
+        version; exit 0
+        ;;
+      "--no-color"|"--no-colour")
+        reset=""
+        bold=""
+        ws_name_color=""
+        shift
+        ;;
+      *)
+        positional+=("${1}")
+        shift
+        ;;
+    esac
+  done
+  set -- "${positional[@]}"
 
-recurse-on "${HOME}/workspace/${1}" "${command}"
+  if [ "$#" -lt 1 ]; then
+    usage; exit 1
+  fi
+
+  local subcommand=${1}; shift
+  case $subcommand in
+    "add")
+      if [ "$#" -ne 2 ]; then
+        usage; exit 1
+      fi
+
+      local workspace=${1}; shift
+      local workspace_path=$*
+      add-workspace "$workspace" "$workspace_path"
+      ;;
+    "rm")
+      if [ "$#" -lt 1 ]; then
+        usage; exit 1
+      fi
+
+      local workspaces=( "$@" )
+      for workspace in "${workspaces[@]}"; do
+        rm-workspace "$workspace"
+      done
+      ;;
+    "list")
+      list-workspaces
+      ;;
+    *)
+      local workspace=${subcommand}
+      recurse-on "${workspace}" "$@"
+      ;;
+  esac
+}
+
+main "$@"
