@@ -1,12 +1,12 @@
 #!/bin/bash
 
-set -e
-
-VERSION="0.1.1"
+VERSION="0.1.2"
 
 ws_name_color="$(tput setaf 2)"
 bold="$(tput bold)"
 reset="$(tput sgr0)"
+
+set -e
 
 usage() {
   cat <<EOF
