@@ -22,6 +22,7 @@ Available subcommands are:
   add <workspace> <path>    Adds or updates a workspace path
   rm <workspace>            Removes a workspace
 
+Running commands in a workspace:
   <workspace> <gitcommand>  Executes a git command on all repositories inside
                             the workspace
 EOF
@@ -122,6 +123,7 @@ main() {
       local workspace_path=$*
       add-workspace "$workspace" "$workspace_path"
       ;;
+
     "rm")
       if [ "$#" -lt 1 ]; then
         usage; exit 1
@@ -132,9 +134,11 @@ main() {
         rm-workspace "$workspace"
       done
       ;;
+
     "list")
       list-workspaces
       ;;
+
     *)
       local workspace=${subcommand}
       recurse-on "${workspace}" "$@"

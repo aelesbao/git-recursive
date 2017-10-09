@@ -16,6 +16,7 @@ Available subcommands are:
   add <workspace> <path>    Adds or updates a workspace path
   rm <workspace>            Removes a workspace
 
+Running commands in a workspace:
   <workspace> <gitcommand>  Executes a git command on all repositories inside
                             the workspace
 ```
