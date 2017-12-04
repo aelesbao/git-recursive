@@ -6,6 +6,8 @@ ws_name_color="$(tput setaf 2)"
 bold="$(tput bold)"
 reset="$(tput sgr0)"
 
+verbose=0
+
 set -e
 
 usage() {
@@ -14,6 +16,7 @@ usage: git recursive [<options>] <subcommand>|(<workspace> <gitcommand>)
 
 Available options are:
   --no-color        Do not colorize output
+  -V|--verbose      Be verbose
   -h|--help         Print this message
   -v|--version      Print the plugin version
 
@@ -94,6 +97,10 @@ main() {
       "-v"|"--version")
         version; exit 0
         ;;
+      "-V"|"--verbose")
+        verbose=1
+        shift
+        ;;
       "--no-color"|"--no-colour")
         reset=""
         bold=""
@@ -110,6 +117,10 @@ main() {
 
   if [ "$#" -lt 1 ]; then
     usage; exit 1
+  fi
+
+  if (( verbose )); then
+    set -x
   fi
 
   local subcommand=${1}; shift
