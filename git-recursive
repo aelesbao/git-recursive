@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION="0.1.2"
+VERSION="0.2.0"
 
 ws_name_color="$(tput setaf 2)"
 bold="$(tput bold)"
