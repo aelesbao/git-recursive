@@ -72,16 +72,17 @@ recurse-on() {
   fi
 
   local root
-  local command=${2}
-
   root="$(get-workspace "${1}")"
+
   if [ ! -d "${root}" ]; then
     echo "Workspace not found: ${1}"
     return 1
   fi
 
+  local command="${*:2}"
+
   for repo in $(find "${root}" -name .git -type d -depth 2 -exec dirname {} \;); do
-    printf "${bold}$(basename ${repo})${reset}\n"
+    printf "${bold}%s${reset}\n" "$(basename ${repo})"
     git -C "${repo}" ${command}
     printf '\n'
   done
