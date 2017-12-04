@@ -14,16 +14,16 @@ usage: git recursive [<options>] <subcommand>|(<workspace> <gitcommand>)
 
 Available options are:
   --no-color        Do not colorize output
-  -h|--help         Prints this message
-  -v|--version      Prints the plugin version
+  -h|--help         Print this message
+  -v|--version      Print the plugin version
 
 Available subcommands are:
-  list                      Lists registered workspaces
-  add <workspace> <path>    Adds or updates a workspace path
-  rm <workspace>            Removes a workspace
+  list                      List registered workspaces
+  add <workspace> <path>    Add or update a workspace path
+  rm <workspace>            Remove a workspace
 
 Running commands in a workspace:
-  <workspace> <gitcommand>  Executes a git command on all repositories inside
+  <workspace> <gitcommand>  Execute a git command on all repositories inside
                             the workspace
 EOF
 }
