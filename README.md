@@ -6,16 +6,19 @@ Imagine you want to sync your local repositores and those are organised like thi
 
 ```
 ~/workspace
-  /org1
+  /repo-group-1
     /repo1
     /repo2
     /repo3
+  /repo-group-2
+    /repo1
+    /repo2
 ```
 
 Instead of going into each of them and doing a `git pull`, with git-recursive you can just execute:
 
 ```bash
-git recursive org1 pull
+git recursive repo-group-1 pull
 ```
 
 ## Installation
@@ -49,7 +52,7 @@ make install PREFIX=$HOME/software
 git-recursive uses your `.gitconfig` file to store the path to a repository root, called `workspace`. To configure it, you should run:
 
 ```bash
-git recursive add org1 ~/workspace/org1
+git recursive add repo-group-1 ~/workspace/repo-group-1
 ```
 
 > Mutiples workspaces are supported. Just add them as you want.
@@ -57,7 +60,7 @@ git recursive add org1 ~/workspace/org1
 Any command issued on a workspace will be forwarded to its child repositories:
 
 ```bash
-git recursive org1 status
+git recursive repo-group-1 status
 ```
 
 To list the registered workspaces:
