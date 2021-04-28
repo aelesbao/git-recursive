@@ -81,7 +81,7 @@ recurse-on() {
 
   local command="${*:2}"
 
-  for repo in $(find "${root}" -name .git -type d -depth 2 -exec dirname {} \;); do
+  for repo in $(find -L "${root}" -name .git -type d -maxdepth 2 -exec dirname {} \;); do
     printf "${bold}%s${reset}\n" "$(basename ${repo})"
     git -C "${repo}" ${command}
     printf '\n'
