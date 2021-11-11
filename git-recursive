@@ -8,6 +8,9 @@ reset="$(tput sgr0)"
 
 verbose=0
 
+config_file_flag="--global"
+
+
 set -e
 
 usage() {
@@ -15,6 +18,7 @@ usage() {
 usage: git recursive [<options>] <subcommand>|(<workspace> <gitcommand>)
 
 Available options are:
+  -f|--file         Configuration file to use (defaults to --global)
   --no-color        Do not colorize output
   -V|--verbose      Be verbose
   -h|--help         Print this message
@@ -42,7 +46,7 @@ resolve-dir() {
 add-workspace() {
   local workspace=${1}
   local workspace_path=${2}
-  git config --global "workspaces.${workspace}" "${workspace_path}"
+  git config ${config_file_flag} "workspaces.${workspace}" "${workspace_path}"
 }
 
 rm-workspace() {
@@ -51,7 +55,7 @@ rm-workspace() {
   fi
 
   local workspace=${1}
-  git config --global --unset "workspaces.${workspace}"
+  git config ${config_file_flag} --unset "workspaces.${workspace}"
 }
 
 list-workspaces() {
@@ -100,6 +104,10 @@ main() {
         ;;
       "-V"|"--verbose")
         verbose=1
+        shift
+        ;;
+      "-f"|"--file")
+        shift; config_file_flag="-f '${1}'"
         shift
         ;;
       "--no-color"|"--no-colour")
