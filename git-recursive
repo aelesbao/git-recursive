@@ -107,7 +107,7 @@ main() {
         shift
         ;;
       "-f"|"--file")
-        shift; config_file_flag="-f '${1}'"
+        shift; config_file_flag="-f ${1}"
         shift
         ;;
       "--no-color"|"--no-colour")
