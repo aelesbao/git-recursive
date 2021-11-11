@@ -63,7 +63,7 @@ list-workspaces() {
 
 get-workspace() {
   local workspace=${1}
-  resolve-dir "$(git config --global "workspaces.${workspace}")"
+  resolve-dir "$(git config --get "workspaces.${workspace}")"
 }
 
 recurse-on() {
